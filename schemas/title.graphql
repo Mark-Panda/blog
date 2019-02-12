@@ -1,0 +1,29 @@
+type Title {
+    id: ObjID!
+    author: String!    #作者
+    source: String!    #来源
+
+}
+
+
+extend type Query {
+    titles(
+        lastCreatedAt: Float
+        skip: Int
+        limit: Int
+    ):[Title!]
+    title(id:ObjID!):Title
+}
+
+
+input CreateTitleInput {
+
+}
+
+input UpdateTitleInput {
+
+}
+
+extend type Mutation {
+
+}

@@ -1,0 +1,60 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/bootstrap-4.0.0/favicon.ico">   <!--../../../../favicon.ico-->
+
+    <title>登录页面</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/bootstrap-4.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/bootstrap-4.0.0/docs/4.0/examples/sign-in/signin.css" rel="stylesheet">
+</head>
+
+<body class="text-center">
+<form class="form-signin" method="post" enctype="multipart/form-data">  <!--增加method与enctype两个属性-->
+    <!--<img class="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">-->
+    <h1 class="h3 mb-3 font-weight-normal">登录</h1>
+    <label for="inputEmail" class="sr-only">账号</label>
+    <input type="text" id="loginInput" class="form-control" placeholder="请输入用户名" required autofocus>
+    <label for="inputPassword" class="sr-only">密码</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="请输入密码" required>
+    <!--<div class="checkbox mb-3">-->
+        <!--<label>-->
+            <!--<input type="checkbox" value="remember-me"> 记住账号-->
+        <!--</label>-->
+    <!--</div>-->
+    <button id="login" class="btn btn-lg btn-primary btn-block" type="submit">登入</button>
+    <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
+</form>
+<script src="/jquery-2.1.1/jquery.min.js"></script>
+<script>
+    //用ajax提交表单
+    $('#login').click(function () {
+        $.post("/login/dologin",{
+            "username" : $("#loginInput").val(),
+            "password" : $("#inputPassword").val()
+
+        },function (result,status,xhr) {
+            if(result == "1"){
+                alert("登陆成功！跳转到首页！");
+                window.location.href = "/";
+            }else if(result == "-2"){
+                alert("密码错误");
+            }else if(result == "-1"){
+                alert("没有该用户");
+            }else if(result == "-3"){
+                alert("服务器错误！");
+            }else{
+                alert("未知原因，登陆失败");
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

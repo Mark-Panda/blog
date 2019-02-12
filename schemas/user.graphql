@@ -1,0 +1,180 @@
+type Patient {
+    id: ObjID!
+    phone: String!
+    certificateType: String! # 证件类型，01身份证，02军人证，03户口本，04签证，05护照，06港澳通行证，07市民卡
+    certificateNo: String!
+    name: String!
+    sex: String!
+    birthday: String!
+    age:String #年龄
+    default: Boolean
+    # [{ key: '01', label: '本人' }, { key: '02', label: '家庭成员' }, { key: '03', label: '亲戚' }, { key: '04', label: '朋友' }, { key: '05', label: '其他' }]
+    relationship: String
+    carteVital: String
+    carteVitalStatus: Boolean #医保卡状态
+    hasCard: Boolean #是否绑定就诊卡
+    #门特标志
+    userOPSPFlag: String
+    # 公医患者标志
+    userPublicPatientFlag: String
+    deleted: Boolean
+    # 是否通过实名认证，'0'未认证， '1'认证通过
+    certified(userId: String): String
+    user: User!
+    platForm: String #注册时的手机型号
+    system: String #系统版本号
+    #患者地址
+    address: String
+    patientType:PatientType
+    appointmentBySocialNo(startDate:String,endDate:String,lastCreatedAt: Float, skip: Int, limit: Int,) : [Appointment]
+    patientCards(lastCreatedAt: Float, skip: Int, limit: Int): [PatientCard]
+    inpatientCards(lastCreatedAt: Float, skip: Int, limit: Int): [InpatientCard]
+    inpatientRecords(skip: Int, limit: Int): [InpatientRecord]
+    inpatientRecord: InpatientRecord
+    outPaymentTotals(skip: Int, limit: Int, today: Boolean, payStatus: Boolean): [OutPaymentTotal]
+    consultations(lastCreatedAt: Float, skip: Int, limit: Int, argueStatus:Boolean ): [Consultation]
+    consultationsArgument(lastCreatedAt: Float, skip: Int, limit: Int, argueStatus:Boolean ): [Consultation]
+    payments(lastCreatedAt: Float, skip: Int, limit: Int, typeName: String): [Payment]
+    chats(skip: Int, limit: Int): [Chat]
+    patientWithDoctors(skip: Int, limit: Int): [PatientWithDoctor]
+    prescriptions(lastCreatedAt: Float, skip: Int, limit: Int): [Prescription]
+    doctorAddVisits(skip: Int, limit: Int): [DoctorAddVisit]
+    createdAt: Float!
+    updatedAt: Float!
+}
+
+extend type Query {
+    patients(lastCreatedAt: Float, skip: Int, limit: Int): [Patient!]
+    patient(id: ObjID!): Patient
+    patientInitCard: Boolean
+    getHisPatientInfo(certificateType: String, certificateNo: String): HisPatientInfo
+    changeMobile(certificateType: String, certificateNo: String, phone: String): changeMobileOutput
+    queryPatientInfo(input:patientInfo):[patientInfoResult]
+}
+
+type patientInfoResult{
+    patientIdNo: String
+    certificateNo: String
+    visitNo: String
+    phone: String
+    birthday: String
+    address: String
+    patientTypeName: String
+    patientTypeCode: String
+    userOPSPFlag: String
+    userPublicPatientFlag: String
+}
+
+input patientInfo{
+    #姓名
+    name:String,
+    #证件号
+    certificateNo: String!
+    #证件类型
+    certificateType: String
+    #性别
+    sex:String
+}
+
+input CreatePatientInput {
+    phone: String!
+    certificateNo: String!
+    certificateType: String
+    birthday: String
+    name: String!
+    default: Boolean
+    relationship: String
+    carteVital: String
+    carteVitalStatus: Boolean #医保卡状态
+    userOPSPFlag: String
+    userPublicPatientFlag: String
+    visitNo: String #就诊卡号
+    userId: ObjID!
+    hospitalId: ObjID
+    certified: String
+    platForm: String #注册时的手机型号
+    system: String #系统版本号
+}
+
+input CreatePatientInputZSYK {
+    phone: String!
+    patientIdNo: String
+    patientTypeCode: String
+    patientTypeName: String
+    certificateNo: String!
+    certificateType: String
+    birthday: String
+    name: String!
+    default: Boolean
+    relationship: String
+    carteVital: String
+    carteVitalStatus: Boolean #医保卡状态
+    userOPSPFlag: String
+    address: String
+    userPublicPatientFlag: String
+    visitNo: String #就诊卡号
+    userId: ObjID!
+    hospitalId: ObjID
+    certified: String
+}
+
+input UpdatePatientInput {
+    phone: String
+    default: Boolean
+    birthday: String
+    relationship: String
+    carteVital: String
+    carteVitalStatus: Boolean #医保卡状态
+    userOPSPFlag: String
+    userPublicPatientFlag: String
+}
+
+input UpdateDefaultPatientInput {
+    default: Boolean!
+}
+
+type HisPatientInfo {
+    code: String
+    name: String
+    phone: String
+    sex: String
+    certificateType: String
+    certificateNo: String
+    visitNo: String
+    patientIdNo: String
+    certified: String
+}
+
+type changeMobileOutput {
+    code: String
+}
+
+
+input CreatePatientHDInput {
+    phone: String
+    certificateNo: String!
+    certificateType: String
+    birthday: String
+    name: String!
+    default: Boolean
+    relationship: String
+    carteVital: String
+    carteVitalStatus: Boolean #医保卡状态
+    userOPSPFlag: String
+    userPublicPatientFlag: String
+    visitNo: String #就诊卡号
+    userId: ObjID!
+    hospitalId: ObjID
+    certified: String
+}
+
+extend type Mutation {
+    createPatient(input: CreatePatientInput!): Patient
+    createPatientZSYK(input: CreatePatientInputZSYK!): Patient
+    createPatientWithoutHis(input: CreatePatientInput!): Patient
+    createPatientWithoutHisForHD(input: CreatePatientHDInput!): Patient
+    createPatientWithoutPatientCard(input: CreatePatientInput!): Patient
+    updatePatient(id: ObjID!, input: UpdatePatientInput!): Patient
+    setDefaultPatient(id: ObjID!, input: UpdateDefaultPatientInput!): Patient
+    removePatient(id: ObjID!): Boolean
+}
